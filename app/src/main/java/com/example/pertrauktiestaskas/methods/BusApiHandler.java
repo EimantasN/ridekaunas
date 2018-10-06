@@ -1,13 +1,21 @@
 package com.example.pertrauktiestaskas.methods;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 
+import com.example.pertrauktiestaskas.models.Coordinate;
 import com.example.pertrauktiestaskas.models.RootObject;
 import com.example.pertrauktiestaskas.models.RouteSegment;
 import com.example.pertrauktiestaskas.models.TrafiListModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,30 +51,26 @@ public class BusApiHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-return null;
+        return null;
     }
 
     public static List<TrafiListModel> FormatRoutesToListModel(RootObject routes) {
         List<TrafiListModel> data = new ArrayList<>();
-        if(routes.Routes != null){
-            for(RouteSegment s : routes.Routes.get(0).RouteSegments) {
+        if (routes.Routes != null) {
+            for (RouteSegment s : routes.Routes.get(0).RouteSegments) {
                 TrafiListModel tmp = new TrafiListModel();
-                    tmp.Image = s.IconUrl;
-                    tmp.StartTime = s.StartPoint.Time;
-                    tmp.EndTime = s.EndPoint.Time;
-                    tmp.EndStreet = s.EndPoint.Name;
-                    tmp.NextStopDistance = s.DistanceMeters + " m";
-                    tmp.NextStopTime = s.DurationMinutes + " min";
-                    tmp.ImageBottomDistance = Integer.toString(s.WalkDistanceMeters);
-                    data.add(tmp);
+                tmp.Image = s.IconUrl;
+                tmp.StartTime = s.StartPoint.Time;
+                tmp.EndTime = s.EndPoint.Time;
+                tmp.EndStreet = s.EndPoint.Name;
+                tmp.NextStopDistance = s.DistanceMeters + " m";
+                tmp.NextStopTime = s.DurationMinutes + " min";
+                tmp.ImageBottomDistance = Integer.toString(s.WalkDistanceMeters);
+                data.add(tmp);
             }
             return data;
-            }
-            return null;
         }
-
-        public static void GetCurrentCoordinates() {
-            //LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        }
+        return null;
+    }
 }
 
