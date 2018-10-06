@@ -1,5 +1,4 @@
-package com.example.pertrauktiestaskas.trulify;
-
+package com.example.pertrauktiestaskas.methods;
 import com.example.pertrauktiestaskas.models.RootObject;
 import com.example.pertrauktiestaskas.models.TrafiListModel;
 
