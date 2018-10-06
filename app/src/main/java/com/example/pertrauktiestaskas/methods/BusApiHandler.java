@@ -1,4 +1,7 @@
-package com.example.pertrauktiestaskas.trulify;
+package com.example.pertrauktiestaskas.methods;
+
+import android.content.Context;
+import android.location.LocationManager;
 
 import com.example.pertrauktiestaskas.models.RootObject;
 import com.example.pertrauktiestaskas.models.RouteSegment;
@@ -60,6 +63,10 @@ return null;
             return data;
             }
             return null;
+        }
+
+        public static void GetCurrentCoordinates() {
+            //LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         }
 }
 
