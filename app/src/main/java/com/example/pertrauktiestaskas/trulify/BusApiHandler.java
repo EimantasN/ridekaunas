@@ -5,7 +5,6 @@ import com.example.pertrauktiestaskas.models.RouteSegment;
 import com.example.pertrauktiestaskas.models.TrafiListModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mashape.unirest.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +25,9 @@ public class BusApiHandler {
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder()
-                    .url("http://api-ext.trafi.com/routes?start_lat=41.03749&start_lng=28.98592&end_lat=40.991825&end_lng=29.023699&is_arrival=false&api_key=sandbox_key_not_for_production")
+                    .url(url)
                     .get()
                     .addHeader("Cache-Control", "no-cache")
-                    .addHeader("Postman-Token", "89010736-796d-4371-8b0d-a08d34659a22")
                     .build();
 
             Response resp = client.newCall(request).execute();
