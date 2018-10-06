@@ -1,6 +1,5 @@
 package com.example.pertrauktiestaskas.trulify;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,13 +20,13 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListen
 
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity
+public class FindBus extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_find_bus);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -97,16 +96,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(this, FindBus.class);
-            startActivity(intent);
-            finish();
 
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
-            Intent intent = new Intent(this, FindBus.class);
-            startActivity(intent);
-            finish();
 
         } else if (id == R.id.nav_share) {
 

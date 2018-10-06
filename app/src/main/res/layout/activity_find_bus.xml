@@ -36,6 +36,7 @@
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="192dp"
+            android:visibility="gone"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -131,7 +132,7 @@
         <!--android:src="@drawable/icon" // change backgroung icon-->
 
 
-        <include layout="@layout/content_main"/>
+        <include layout="@layout/find_bus_content"/>
 
         <!--<android.support.design.widget.FloatingActionButton-->
         <!--android:id="@+id/fab"-->
@@ -144,9 +145,9 @@
     </android.support.design.widget.CoordinatorLayout>
 
     <!--<include-->
-        <!--layout="@layout/app_bar_main"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
+    <!--layout="@layout/app_bar_main"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" />-->
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
