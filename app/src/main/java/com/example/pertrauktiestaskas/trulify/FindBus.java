@@ -1,5 +1,6 @@
 package com.example.pertrauktiestaskas.trulify;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,13 @@ import java.util.Calendar;
 
 public class FindBus extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    //First To city recycleView
+//    private static MyList<TrafiListModel> ToCityList;
+//
+//    private RecyclerView.LayoutManager mLayoutManagerToCity;
+//    private static RecyclerView.Adapter mAdapterToCity;
+//    private static RecyclerView mRecyclerViewToCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

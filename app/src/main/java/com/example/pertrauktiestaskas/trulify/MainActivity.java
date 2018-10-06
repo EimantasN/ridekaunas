@@ -97,16 +97,16 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(this, FindBus.class);
-            startActivity(intent);
-            finish();
+            Intent i = new Intent(getApplicationContext(), FindBus.class);
+            i.putExtra("studentId", "1");
+            startActivity(i);
 
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
-            Intent intent = new Intent(this, FindBus.class);
-            startActivity(intent);
-            finish();
+            Intent i = new Intent(getApplicationContext(), FindBus.class);
+            i.putExtra("studentId", "1");
+            startActivity(i);
 
         } else if (id == R.id.nav_share) {
 
