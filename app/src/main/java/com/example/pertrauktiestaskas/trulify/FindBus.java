@@ -1,13 +1,23 @@
 package com.example.pertrauktiestaskas.trulify;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,20 +29,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.example.pertrauktiestaskas.methods.BusApiHandler;
+import com.example.pertrauktiestaskas.methods.BusThread;
+import com.example.pertrauktiestaskas.models.RootObject;
 import com.example.pertrauktiestaskas.models.Route;
 import com.example.pertrauktiestaskas.models.TrafiListModel;
 import com.squareup.picasso.Picasso;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListener;
 
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class FindBus extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -43,6 +61,8 @@ public class FindBus extends AppCompatActivity
     private RecyclerView.LayoutManager mLayoutManagerToCity;
     private static RecyclerView.Adapter mAdapterToCity;
     private static RecyclerView mRecyclerViewToCity;
+    LocationManager locationManager;
+    BusApiHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +101,126 @@ public class FindBus extends AppCompatActivity
         mAdapterToCity = new RecyclerAdapterTrafi(ToCityList, mRecyclerViewToCity, this);
         mRecyclerViewToCity.setAdapter(mAdapterToCity);
 
-        ToCityList.add(new TrafiListModel());
-        mAdapterToCity.notifyItemInserted(ToCityList.size() - 1);
+        locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
 
+        Button Search = findViewById(R.id.button);
+        Search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchRoute();
+            }
+        });
+
+        handler = new BusApiHandler();
+    }
+
+    public void SearchRoute() {
+
+        for(int i =0; i < ToCityList.size(); i++)
+        {
+            ToCityList.remove(i);
+            mAdapterToCity.notifyItemRemoved(i);
+        }
+        if(ToCityList.size() != 0) {
+            ToCityList.clear();
+            mAdapterToCity.notifyDataSetChanged();
+        }
 
         ToCityList.add(null);
         mAdapterToCity.notifyItemInserted(ToCityList.size() - 1);
+
+        LocationListener locationListener = new MyLocationListener();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//               public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                                                      int[] grantResults)
+            return;
+        }
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+    }
+
+    private class MyLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location loc) {
+//loc            editLocation.setText("");
+            //pb.setVisibility(View.INVISIBLE);
+            Toast.makeText(
+                    getBaseContext(),
+                    "Location changed: Lat: " + loc.getLatitude() + " Lng: "
+                            + loc.getLongitude(), Toast.LENGTH_SHORT).show();
+            String longitude = "Longitude: " + loc.getLongitude();
+            //Log.v(TAG, longitude);
+            String latitude = "Latitude: " + loc.getLatitude();
+            //Log.v(TAG, latitude);
+
+            /*------- To get city name from coordinates -------- */
+            String cityName = null;
+            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+            List<Address> addresses;
+            try {
+                addresses = gcd.getFromLocation(loc.getLatitude(),
+                        loc.getLongitude(), 1);
+                if (addresses.size() > 0) {
+                    System.out.println(addresses.get(0).getLocality());
+                    cityName = addresses.get(0).getLocality();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            String s = longitude.replace("Longitude: ", "") + "\n" + latitude.replace("Latitude: ", "") + "\n\nMy Current City is: "
+                    + cityName;
+            //editLocation.setText(s);
+            new LongOperation().execute("");
+
+        }
+
+        private class LongOperation extends AsyncTask<String, Void, String> {
+
+            List<TrafiListModel> data;
+            @Override
+            protected String doInBackground(String... params) {
+                try {
+                    RootObject datax = BusApiHandler.GetRouteData("54.899892799999996", "23.961243699999997", "54.8975596", "23.9175674");
+                    data = handler.FormatRoutesToListModel(datax);
+                }
+                catch (Exception e)
+                {
+                    String vc = e.getMessage();
+                }
+
+                return "Executed";
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+
+                ToCityList.remove(0);
+                    mAdapterToCity.notifyItemRemoved(0);
+
+                for (TrafiListModel a : data) {
+                    ToCityList.add(a);
+                    mAdapterToCity.notifyItemInserted(ToCityList.size() - 1);
+                }
+            }
+
+            @Override
+            protected void onPreExecute() {}
+
+            @Override
+            protected void onProgressUpdate(Void... values) {}
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {}
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
     }
 
     @Override
@@ -261,7 +395,13 @@ public class FindBus extends AppCompatActivity
             else
             {
                 TrafiListview myHolder = (TrafiListview)holder;
-                myHolder.mEndStreet.setText(TrafiList.get(position).StartTime);;
+                if(TrafiList.get(position).EndStreet.isEmpty())
+                {
+                    myHolder.mEndStreet.setText("Atvykote");
+                }
+                else {
+                    myHolder.mEndStreet.setText(TrafiList.get(position).EndStreet);
+                }
                 myHolder.mEndTime.setText(TrafiList.get(position).EndTime);
                 myHolder.mStartTime.setText(TrafiList.get(position).StartTime);
                 myHolder.mNextStopTime.setText(TrafiList.get(position).NextStopTime);

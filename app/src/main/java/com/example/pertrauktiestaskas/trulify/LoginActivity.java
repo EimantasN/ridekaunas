@@ -153,6 +153,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
+
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        i.putExtra("studentId", "1");
+        startActivity(i);
+
         if (mAuthTask != null) {
             return;
         }

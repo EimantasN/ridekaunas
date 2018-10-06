@@ -6,26 +6,26 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class Register extends AppCompatActivity {
+public class register_account extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_card_layout);
+        setContentView(R.layout.register_layout);
 
-        Button AddCard = (Button) findViewById(R.id.button4);
+        Button AddCard = (Button) findViewById(R.id.button5);
 
         AddCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddCard();
+                Register();
             }
         });
     }
 
-    public void AddCard()
+    private void Register()
     {
-        Intent i = new Intent(getApplicationContext(), register_account.class);
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
         i.putExtra("studentId", "1");
         startActivity(i);
     }

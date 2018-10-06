@@ -1,4 +1,6 @@
 package com.example.pertrauktiestaskas.methods;
+import android.app.Application;
+
 import com.example.pertrauktiestaskas.models.RootObject;
 import com.example.pertrauktiestaskas.models.TrafiListModel;
 
