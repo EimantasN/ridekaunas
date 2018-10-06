@@ -1,5 +1,6 @@
 package com.example.pertrauktiestaskas.trulify;
 
+import com.example.pertrauktiestaskas.methods.NfcClass;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 //        RootObject data = BusApiHandler.GetRouteData("54.901694", "23.961288", "54.893767", "23.925123");
 //        Log.d("TG", data.toString());
+        Intent launchNewIntent = new Intent(MainActivity.this, NfcClass.class);
+        startActivityForResult(launchNewIntent, 0);
     }
 
     @Override
