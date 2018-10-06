@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,8 +50,11 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListen
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,6 +69,11 @@ public class FindBus extends AppCompatActivity
     private static RecyclerView mRecyclerViewToCity;
     LocationManager locationManager;
     BusApiHandler handler;
+
+    public String Longitude;
+    public String Latitude;
+
+    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +94,9 @@ public class FindBus extends AppCompatActivity
                         .playOn(findViewById(R.id.toobalFab));
             }
         });
+
+        button = findViewById(R.id.button);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -108,14 +122,58 @@ public class FindBus extends AppCompatActivity
         Search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SearchRoute();
+                SearchRoute("54.8922995", "23.9246517");
+            }
+        });
+
+        EditText DateText = findViewById(R.id.editText);
+        DateFormat df = new SimpleDateFormat("HH:mm");
+        Date today = Calendar.getInstance().getTime();
+        String reportDate = df.format(today);
+        DateText.setText(reportDate);
+
+        CardView FavoriteRoute = findViewById(R.id.favorite1);
+        FavoriteRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoadFavorite();
+            }
+        });
+
+        CardView FavoriteRoute2 = findViewById(R.id.favorite2);
+        FavoriteRoute2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoadFavorite2();
             }
         });
 
         handler = new BusApiHandler();
     }
 
-    public void SearchRoute() {
+    public void LoadFavorite()
+    {
+        TextInputEditText text = findViewById(R.id.ToTextInput2);
+        text.setText("Studentų g. 67");
+
+        //Studentų 67
+        SearchRoute("54.90300", "23.960314");
+    }
+    public void LoadFavorite2()
+    {
+        TextInputEditText text = findViewById(R.id.ToTextInput2);
+        text.setText("Vytauto pr. 8");
+
+        //Vytauto pr
+        SearchRoute("54.8922995", "23.9246517");
+    }
+
+
+    public void SearchRoute(String EndLatidute, String EndLongitude) {
+
+        button.setVisibility(button.GONE);
+        Longitude = EndLatidute;
+        Latitude = EndLongitude;
 
         for(int i =0; i < ToCityList.size(); i++)
         {
@@ -146,13 +204,13 @@ public class FindBus extends AppCompatActivity
         public void onLocationChanged(Location loc) {
 //loc            editLocation.setText("");
             //pb.setVisibility(View.INVISIBLE);
-            Toast.makeText(
-                    getBaseContext(),
-                    "Location changed: Lat: " + loc.getLatitude() + " Lng: "
-                            + loc.getLongitude(), Toast.LENGTH_SHORT).show();
-            String longitude = "Longitude: " + loc.getLongitude();
+            //Toast.makeText(
+                    //getBaseContext(),
+                    //"Location changed: Lat: " + loc.getLatitude() + " Lng: "
+                            //+ loc.getLongitude(), Toast.LENGTH_SHORT).show();
+            String longitude = ""+loc.getLongitude();
             //Log.v(TAG, longitude);
-            String latitude = "Latitude: " + loc.getLatitude();
+            String latitude = ""+loc.getLatitude();
             //Log.v(TAG, latitude);
 
             /*------- To get city name from coordinates -------- */
@@ -163,17 +221,17 @@ public class FindBus extends AppCompatActivity
                 addresses = gcd.getFromLocation(loc.getLatitude(),
                         loc.getLongitude(), 1);
                 if (addresses.size() > 0) {
-                    System.out.println(addresses.get(0).getLocality());
-                    cityName = addresses.get(0).getLocality();
+                    //System.out.println(addresses.get(0).getLocality());
+                    //cityName = addresses.get(0).getLocality();
                 }
             }
             catch (IOException e) {
                 e.printStackTrace();
             }
-            String s = longitude.replace("Longitude: ", "") + "\n" + latitude.replace("Latitude: ", "") + "\n\nMy Current City is: "
-                    + cityName;
+            //String s = longitude.replace("Longitude: ", "") + "\n" + latitude.replace("Latitude: ", "") + "\n\nMy Current City is: "
+                    //+ cityName;
             //editLocation.setText(s);
-            new LongOperation().execute("");
+            new LongOperation().execute(longitude, latitude);
 
         }
 
@@ -183,7 +241,7 @@ public class FindBus extends AppCompatActivity
             @Override
             protected String doInBackground(String... params) {
                 try {
-                    RootObject datax = BusApiHandler.GetRouteData("54.899892799999996", "23.961243699999997", "54.8975596", "23.9175674");
+                    RootObject datax = BusApiHandler.GetRouteData(params[0], params[1], Longitude, Latitude);
                     data = handler.FormatRoutesToListModel(datax);
                 }
                 catch (Exception e)
@@ -197,13 +255,22 @@ public class FindBus extends AppCompatActivity
             @Override
             protected void onPostExecute(String result) {
 
-                ToCityList.remove(0);
-                    mAdapterToCity.notifyItemRemoved(0);
+                for(int i =0; i < ToCityList.size(); i++)
+                {
+                    ToCityList.remove(i);
+                    mAdapterToCity.notifyItemRemoved(i);
+                }
+                if(ToCityList.size() != 0) {
+                    ToCityList.clear();
+                    mAdapterToCity.notifyDataSetChanged();
+                }
 
                 for (TrafiListModel a : data) {
                     ToCityList.add(a);
                     mAdapterToCity.notifyItemInserted(ToCityList.size() - 1);
                 }
+
+                button.setVisibility(button.VISIBLE);
             }
 
             @Override
@@ -405,8 +472,13 @@ public class FindBus extends AppCompatActivity
                 myHolder.mEndTime.setText(TrafiList.get(position).EndTime);
                 myHolder.mStartTime.setText(TrafiList.get(position).StartTime);
                 myHolder.mNextStopTime.setText(TrafiList.get(position).NextStopTime);
-                myHolder.mNextStopDistance.setText(TrafiList.get(position).NextStopDistance);
-                myHolder.mImageBottomDistance.setText(TrafiList.get(position).ImageBottomDistance);
+
+                    myHolder.mNextStopDistance.setText(TrafiList.get(position).NextStopDistance);
+                if(!TrafiList.get(position).NextStopDistance.trim().equals("0")) {
+                    myHolder.mImageBottomDistance.setText(TrafiList.get(position).ImageBottomDistance);
+                }
+                else
+                    myHolder.mImageBottomDistance.setText("");
 
                 if (!TrafiList.get(position).Image.contains("walksegment"))
                 {
