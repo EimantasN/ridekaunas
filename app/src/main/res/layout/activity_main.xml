@@ -12,7 +12,7 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#1a1649"
+        android:background="@drawable/background"
         tools:context=".MainActivity">
 
         <!--<android.support.design.widget.AppBarLayout-->
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                app:contentScrim="#051920"
+                app:contentScrim="#88c024"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <android.support.constraint.ConstraintLayout

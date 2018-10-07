@@ -42,7 +42,7 @@
                 android:id="@+id/LocationHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#2e2951">
+                android:background="#3d486b">
 
                 <android.support.constraint.Guideline
                     android:id="@+id/CenterGuidline"
@@ -133,7 +133,7 @@
                 android:id="@+id/DateHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#2e2951">
+                android:background="#3d486b">
 
 
                 <ImageView
@@ -212,7 +212,7 @@
                 android:id="@+id/TypeHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#2e2951">
+                android:background="#3d486b">
 
                 <ImageView
                     android:id="@+id/imageView3"
@@ -299,7 +299,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="Seatch"
-            android:background="@color/colorAccent"
+            android:background="#88c024"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView3" />
@@ -339,7 +339,7 @@
                 android:id="@+id/FavoriteHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#2e2951">
+                android:background="#3d486b">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/favorite1"
@@ -358,7 +358,7 @@
                     <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#242040">
+                        android:background="#4f5a7d">
 
 
                         <ImageView
@@ -500,7 +500,7 @@
                     <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#242040">
+                        android:background="#4f5a7d">
 
 
                         <TextView
