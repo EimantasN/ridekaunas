@@ -29,10 +29,6 @@ import com.example.pertrauktiestaskas.methods.BusThread;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String serialId = "";
-    final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-    NfcAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,74 +57,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        adapter = NfcAdapter.getDefaultAdapter(this);
-        onNewIntent(this.getIntent());
-
-//        RootObject data = BusApiHandler.GetRouteData("54.901694", "23.961288", "54.893767", "23.925123");
-//        Log.d("TG", data.toString());
-        //Intent launchNewIntent = new Intent(MainActivity.this, NfcClass.class);
-        //startActivityForResult(launchNewIntent, 0);
-    }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-
-        PendingIntent pendingIntent     = PendingIntent.getActivity(this,0,new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
-        IntentFilter[] intentFilters    = { new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED) };
-
-        adapter.enableForegroundDispatch(   this,
-                pendingIntent,
-                intentFilters,
-                new String[][]{
-                        new String[]{"android.nfc.tech.NfcA"}
-                });
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (adapter != null)
-        {
-            try {
-                adapter.disableForegroundDispatch(this);
-            }
-            catch (NullPointerException e) {
-            }
-        }
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        Toast.makeText(this,""+intent.getAction(), Toast.LENGTH_LONG).show();
-        super.onNewIntent(intent);
-        String action = intent.getAction();
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        if (NfcAdapter.ACTION_TECH_DISCOVERED.equalsIgnoreCase(action)) {
-            try {
-                byte[] tagId = tag.getId();
-                serialId = bytesToHex(tagId);
-
-            } catch (NullPointerException ex) {
-                ex.printStackTrace();
-                serialId = "ERROR";
-            }
-        } else {
-            Toast.makeText(this, "This tag is not supported. Action: " + action, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 
     @Override
@@ -169,23 +97,20 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_dashboard) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_tickets) {
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_search) {
             Intent i = new Intent(getApplicationContext(), FindBus.class);
             i.putExtra("studentId", "1");
             startActivity(i);
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_share) {
-            Intent i = new Intent(getApplicationContext(), FindBus.class);
-            i.putExtra("studentId", "1");
-            startActivity(i);
+        } else if (id == R.id.nav_history) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_cards) {
 
         }
 
