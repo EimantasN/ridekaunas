@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                GoToCards();
             }
         });
 
@@ -202,6 +202,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
+    }
+
+    private void GoToCards()
+    {
+        Intent i = new Intent(getApplicationContext(), CardsActivity.class);
+        startActivity(i);
     }
 
     private void GoToRegister()

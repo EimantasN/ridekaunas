@@ -45,6 +45,7 @@ public class Register extends AppCompatActivity {
     TextView ValidTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getSupportActionBar().setTitle("Register");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_card_layout);
 
