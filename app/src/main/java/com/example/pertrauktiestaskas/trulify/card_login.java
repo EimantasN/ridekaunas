@@ -155,11 +155,10 @@ public class card_login extends AppCompatActivity {
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equalsIgnoreCase(action)) {
             try {
                 byte[] tagId = tag.getId();
-                serialId = bytesToHex(tagId);
-                ClassicCardKeys c = ClassicCardKeys.fromUserInput(ByteUtils.hexStringToByteArray("D3F7D3F7D3F7"),
+                ClassicCardKeys c = ClassicCardKeys.fromUserInput(
+                        ByteUtils.hexStringToByteArray("D3F7D3F7D3F7"),
                         ByteUtils.hexStringToByteArray("FFFFFFFFFFFF"));
                 ClassicTagReader tr = new ClassicTagReader(tagId, tag, c);
-
                 RawClassicCard card = tr.readTag(tagId, tag, tr.getTech(tag), c);
                 ClassicCard cc = card.parse();
                 TalinCard tc = new TalinCard(cc);
