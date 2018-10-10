@@ -5,8 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    >
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -86,7 +85,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="Valid until: 2023-07-05"
@@ -97,7 +95,7 @@
             app:layout_constraintStart_toEndOf="@+id/remaining_money"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <android.support.v7.widget.CardView
             android:id="@+id/card"
             android:layout_width="0dp"
             android:layout_height="100dp"
@@ -106,11 +104,27 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
+            android:background="#383838"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0.0px"
+            android:elevation="8dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/remaining_money"
-            app:srcCompat="@drawable/kauno_kortele" />
+            app:layout_constraintTop_toBottomOf="@+id/remaining_money">
+
+            <ImageView
+                android:id="@+id/card2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/kauno_kortele" />
+
+        </android.support.v7.widget.CardView>
 
         <TextView
             android:id="@+id/last_used"
@@ -118,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="Last used: 15 minutes ago. Not you?"
             android:textSize="10dp"
@@ -132,7 +146,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
             android:text="5.55  €"
             android:textColor="#88c024"
             android:textSize="22sp"

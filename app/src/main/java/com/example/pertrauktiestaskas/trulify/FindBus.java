@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -151,6 +152,9 @@ public class FindBus extends AppCompatActivity
         });
 
         handler = new BusApiHandler();
+
+        ConstraintLayout main = findViewById(R.id.mainConstrain);
+        main.requestFocus();
     }
 
     public void LoadFavorite()
