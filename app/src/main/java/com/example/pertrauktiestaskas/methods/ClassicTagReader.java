@@ -46,10 +46,14 @@ public class ClassicTagReader extends TagReader<MifareClassic, RawClassicCard, C
 
                 // Try the default keys first
                 if (!authSuccess && sectorIndex == 0) {
+                    if(!tech.isConnected())
+                        tech.connect();
                     authSuccess = tech.authenticateSectorWithKeyA(sectorIndex, PREAMBLE_KEY);
                 }
 
                 if (!authSuccess) {
+                    if(!tech.isConnected())
+                        tech.connect();
                     authSuccess = tech.authenticateSectorWithKeyA(sectorIndex, MifareClassic.KEY_DEFAULT);
                 }
 

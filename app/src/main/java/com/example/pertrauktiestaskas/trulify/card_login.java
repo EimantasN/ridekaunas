@@ -2,7 +2,12 @@ package com.example.pertrauktiestaskas.trulify;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +20,12 @@ import android.widget.TextView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.pertrauktiestaskas.firebastModels.User;
+import com.example.pertrauktiestaskas.methods.ByteUtils;
+import com.example.pertrauktiestaskas.methods.ClassicCard;
+import com.example.pertrauktiestaskas.methods.ClassicCardKeys;
+import com.example.pertrauktiestaskas.methods.ClassicTagReader;
+import com.example.pertrauktiestaskas.methods.RawClassicCard;
+import com.example.pertrauktiestaskas.methods.TalinCard;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -24,6 +35,8 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import static com.example.pertrauktiestaskas.methods.NfcClass.bytesToHex;
 
 public class card_login extends AppCompatActivity {
 
@@ -35,6 +48,9 @@ public class card_login extends AppCompatActivity {
 
     GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
+    private String serialId = "";
+    final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+    NfcAdapter adapter;
 
     private DatabaseReference mDatabase;
 
@@ -62,6 +78,9 @@ public class card_login extends AppCompatActivity {
                 AddingCardAnimation();
             }
         } );
+
+        adapter = NfcAdapter.getDefaultAdapter(this);
+        onNewIntent(this.getIntent());
 
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account[] list = manager.getAccountsByType("com.google");
@@ -95,6 +114,65 @@ public class card_login extends AppCompatActivity {
         User user = new User(name, email);
 
         mDatabase.child("users").child(userId).setValue(user);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        PendingIntent pendingIntent     = PendingIntent.getActivity(this,0,new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
+        IntentFilter[] intentFilters    = { new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED) };
+
+        adapter.enableForegroundDispatch(   this,
+                pendingIntent,
+                intentFilters,
+                new String[][]{
+                        new String[]{"android.nfc.tech.NfcA"}
+                });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (adapter != null)
+        {
+            try {
+                adapter.disableForegroundDispatch(this);
+            }
+            catch (NullPointerException e) {
+            }
+        }
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String action = intent.getAction();
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equalsIgnoreCase(action)) {
+            try {
+                byte[] tagId = tag.getId();
+                serialId = bytesToHex(tagId);
+                ClassicCardKeys c = ClassicCardKeys.fromUserInput(ByteUtils.hexStringToByteArray("D3F7D3F7D3F7"),
+                        ByteUtils.hexStringToByteArray("FFFFFFFFFFFF"));
+                ClassicTagReader tr = new ClassicTagReader(tagId, tag, c);
+
+                RawClassicCard card = tr.readTag(tagId, tag, tr.getTech(tag), c);
+                ClassicCard cc = card.parse();
+                TalinCard tc = new TalinCard(cc);
+                tc.getId();
+            } catch (NullPointerException ex) {
+                ex.printStackTrace();
+                serialId = "ERROR";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            //Toast.makeText(this, "This tag is not supported. Action: " + action, Toast.LENGTH_LONG).show();
+        }
     }
 
 

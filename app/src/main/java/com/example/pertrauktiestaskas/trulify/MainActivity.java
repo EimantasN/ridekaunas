@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_dashboard) {
-            // Handle the camera action
         } else if (id == R.id.nav_tickets) {
 
         } else if (id == R.id.nav_search) {
