@@ -22,13 +22,13 @@
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    android:background="#88c024"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                android:background="#88c024"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
 
         </android.support.design.widget.AppBarLayout>
@@ -45,8 +45,18 @@
             app:layout_anchorGravity="bottom|right|end" />
 
 
-        <include layout="@layout/find_bus_content"/>
+        <include layout="@layout/activity_cards"/>
 
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/addfab"
+            android:layout_gravity="bottom|end"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"/>
 
     </android.support.design.widget.CoordinatorLayout>
 
@@ -60,5 +70,7 @@
         app:itemTextColor="#000"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
+
+
 
 </android.support.v4.widget.DrawerLayout>

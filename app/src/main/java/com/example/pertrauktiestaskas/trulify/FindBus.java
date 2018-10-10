@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -72,6 +73,8 @@ public class FindBus extends AppCompatActivity
 
     public String Longitude;
     public String Latitude;
+
+    public boolean Active =false;
 
     Button button;
 
@@ -149,6 +152,9 @@ public class FindBus extends AppCompatActivity
         });
 
         handler = new BusApiHandler();
+
+        ConstraintLayout main = findViewById(R.id.mainConstrain);
+        main.requestFocus();
     }
 
     public void LoadFavorite()
@@ -228,10 +234,16 @@ public class FindBus extends AppCompatActivity
             catch (IOException e) {
                 e.printStackTrace();
             }
-            //String s = longitude.replace("Longitude: ", "") + "\n" + latitude.replace("Latitude: ", "") + "\n\nMy Current City is: "
-                    //+ cityName;
+            String s = longitude.replace("Longitude: ", "") + "\n" + latitude.replace("Latitude: ", "") + "\n\nMy Current City is: ";
             //editLocation.setText(s);
-            new LongOperation().execute(longitude, latitude);
+
+            Toast.makeText(
+                    getBaseContext(), s, Toast.LENGTH_SHORT).show();
+
+            if(!Active) {
+                Active=true;
+                new LongOperation().execute(latitude, longitude);
+            }
 
         }
 
@@ -265,12 +277,21 @@ public class FindBus extends AppCompatActivity
                     mAdapterToCity.notifyDataSetChanged();
                 }
 
-                for (TrafiListModel a : data) {
-                    ToCityList.add(a);
-                    mAdapterToCity.notifyItemInserted(ToCityList.size() - 1);
+                if(data != null) {
+                    for (TrafiListModel a : data) {
+                        ToCityList.add(a);
+                        mAdapterToCity.notifyItemInserted(ToCityList.size() - 1);
+                    }
+                }
+                else
+                {
+                    Toast.makeText(
+                    getBaseContext(), "Nepavyko gauti informacijos", Toast.LENGTH_SHORT).show();
                 }
 
                 button.setVisibility(button.VISIBLE);
+
+                Active = false;
             }
 
             @Override
@@ -329,7 +350,9 @@ public class FindBus extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_dashboard) {
-
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            i.putExtra("studentId", "1");
+            startActivity(i);
         } else if (id == R.id.nav_tickets) {
 
         } else if (id == R.id.nav_search) {

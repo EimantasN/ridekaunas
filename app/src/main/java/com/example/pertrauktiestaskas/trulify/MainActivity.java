@@ -40,12 +40,12 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                YoYo.with(Techniques.RotateInDownLeft)
-                        .duration(700)
-                        .repeat(5)
-                        .playOn(findViewById(R.id.toobalFab));
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//                YoYo.with(Techniques.RotateInDownLeft)
+//                        .duration(700)
+//                        .repeat(5)
+//                        .playOn(findViewById(R.id.toobalFab));
             }
         });
 
@@ -57,6 +57,17 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        FloatingActionButton cards = findViewById(R.id.toobalFab);
+        cards.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), cardlist.class);
+                i.putExtra("studentId", "1");
+                startActivity(i);
+            }
+        });
     }
 
     @Override
