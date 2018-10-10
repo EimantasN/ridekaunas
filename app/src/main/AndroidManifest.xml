@@ -22,47 +22,50 @@
             android:label="One Ticket"
             android:theme="@style/AppTheme.NoActionBar">
 
-        <intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
 
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
 
-            <!--<action android:name="android.nfc.action.NDEF_DISCOVERED" />-->
-            <!--<action android:name="android.nfc.action.TAG_DISCOVERED"/>-->
-            <!--<action android:name="android.nfc.action.TECH_DISCOVERED" />-->
-        </intent-filter>
-            </activity>
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
         <activity
             android:name=".FindBus"
-            android:label="Find Bus"
+            android:label="Find Transport"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:label="@string/title_activity_login">
         </activity>
         <activity
             android:name=".Register"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="android.nfc.action.TAG_DISCOVERED"/>
+
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
             </intent-filter>
-    </activity>
-        <activity android:name=".register_account"></activity>
+        </activity>
+        <activity
+            android:name=".register_account"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".cardlist"
+            android:label="Card List"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".card_login"
+            android:label="card_login"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

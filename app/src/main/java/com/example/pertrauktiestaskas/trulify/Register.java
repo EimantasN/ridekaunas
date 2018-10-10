@@ -8,7 +8,6 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,10 +16,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.pertrauktiestaskas.methods.BusApiHandler;
-import com.example.pertrauktiestaskas.models.RootObject;
 import com.example.pertrauktiestaskas.models.TrafiListModel;
 
 import java.util.List;
@@ -45,11 +42,10 @@ public class Register extends AppCompatActivity {
     TextView ValidTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getSupportActionBar().setTitle("Register");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_card_layout);
 
-        header = findViewById(R.id.textView5);
+        header = findViewById(R.id.statustext);
 
         AddCard = (Button) findViewById(R.id.button4);
         AddCard.setEnabled(false);
@@ -74,7 +70,7 @@ public class Register extends AppCompatActivity {
         IDText = findViewById(R.id.textView13);
         ValidTime = findViewById(R.id.textView9);
 
-        progress = findViewById(R.id.progressBar2);
+        progress = findViewById(R.id.loading);
 
 
         TextInputEditText name = findViewById(R.id.nameText);
@@ -167,23 +163,27 @@ public class Register extends AppCompatActivity {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equalsIgnoreCase(action)) {
             try {
-                byte[] tagId = tag.getId();
-                serialId = bytesToHex(tagId);
+                if(tag != null) {
 
-                IDText.setText("0000   0000   00" +
-                        serialId.toCharArray()[0] + serialId.toCharArray()[1] +""+
-                    "   " +  serialId.toCharArray()[2] +
-                        serialId.toCharArray()[3] +
-                        serialId.toCharArray()[4] +
-                        serialId.toCharArray()[5]);
+                    byte[] tagId = tag.getId();
+                    serialId = bytesToHex(tagId);
 
-                ValidTime.setText("Valid unitl 2023-07-01");
 
-                header.setText("Synchronization in progress...");
+                    IDText.setText("0000   0000   00" +
+                            serialId.toCharArray()[0] + serialId.toCharArray()[1] + "" +
+                            "   " + serialId.toCharArray()[2] +
+                            serialId.toCharArray()[3] +
+                            serialId.toCharArray()[4] +
+                            serialId.toCharArray()[5]);
 
-                progress.setVisibility(progress.VISIBLE);
+                    ValidTime.setText("Valid unitl 2023-07-01");
 
-                new LongOperation().execute();
+                    header.setText("Synchronization in progress...");
+
+                    progress.setVisibility(progress.VISIBLE);
+
+                    new LongOperation().execute();
+                }
 
             } catch (NullPointerException ex) {
                 ex.printStackTrace();

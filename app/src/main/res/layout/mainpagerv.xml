@@ -184,4 +184,5 @@
             app:layout_constraintTop_toTopOf="@+id/imageView18" />
 
     </android.support.constraint.ConstraintLayout>
+
 </android.support.v7.widget.CardView>
