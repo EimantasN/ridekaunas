@@ -63,12 +63,14 @@ public class ClassicTagRW extends TagReader<MifareClassic, RawClassicCard, Class
                 authSuccess = tech.authenticateSectorWithKeyA(sector, PREAMBLE_KEY);
             }
 
+            // Try other default key
             if (!authSuccess) {
                 if (!tech.isConnected())
                     tech.connect();
                 authSuccess = tech.authenticateSectorWithKeyA(sector, MifareClassic.KEY_DEFAULT);
             }
 
+            // Authenticate with provided keys
             if (cardKeys != null) {
                 // Try with a 1:1 sector mapping on our key list first
                 if (!authSuccess) {
@@ -118,6 +120,7 @@ public class ClassicTagRW extends TagReader<MifareClassic, RawClassicCard, Class
                     byte[] data = tech.readBlock(firstBlockIndex + blockIndex);
                     blocks.add(RawClassicBlock.create(blockIndex, data));
                 }
+
                 IOUtils.closeQuietly(tech);
                 return (ClassicSector) RawClassicSector.createData(sector, blocks);
             } else {
@@ -149,12 +152,14 @@ public class ClassicTagRW extends TagReader<MifareClassic, RawClassicCard, Class
                     authSuccess = tech.authenticateSectorWithKeyA(sectorIndex, PREAMBLE_KEY);
                 }
 
+                // Try other default key
                 if (!authSuccess) {
                     if (!tech.isConnected())
                         tech.connect();
                     authSuccess = tech.authenticateSectorWithKeyA(sectorIndex, MifareClassic.KEY_DEFAULT);
                 }
 
+                // Try authenticate with provided keys
                 if (cardKeys != null) {
                     // Try with a 1:1 sector mapping on our key list first
                     if (!authSuccess) {
@@ -235,12 +240,14 @@ public class ClassicTagRW extends TagReader<MifareClassic, RawClassicCard, Class
                     authSuccess = tech.authenticateSectorWithKeyA(sectorIndex, PREAMBLE_KEY);
                 }
 
+                // Try with other default key
                 if (!authSuccess) {
                     if(!tech.isConnected())
                         tech.connect();
                     authSuccess = tech.authenticateSectorWithKeyA(sectorIndex, MifareClassic.KEY_DEFAULT);
                 }
 
+                // Try to authenticate with provided keys
                 if (cardKeys != null) {
                     // Try with a 1:1 sector mapping on our key list first
                     if (!authSuccess) {
@@ -311,17 +318,20 @@ public class ClassicTagRW extends TagReader<MifareClassic, RawClassicCard, Class
                                    @NonNull int block) {
         try {
             boolean authSuccess = false;
+            // If tag isn't connected, connect
             if (!authSuccess && sector != 0 && cardKeys != null) {
                 if (!tech.isConnected()) {
                     tech.connect();
                 }
-
+                // Authenticate with A key
                 ClassicSectorKey sectorKey = cardKeys.keys().get(0);
                 authSuccess = tech.authenticateSectorWithKeyA(sector, sectorKey.getKeyA().bytes());
 
+                // If authentication failed, try B key
                 if (!authSuccess)
                     authSuccess = tech.authenticateSectorWithKeyB(sector, sectorKey.getKeyB().bytes());
             }
+            // If authentication succeed, write block
             if (authSuccess) {
                 int pBlock = tech.sectorToBlock(sector);
                 int blockIndex = pBlock + block;
