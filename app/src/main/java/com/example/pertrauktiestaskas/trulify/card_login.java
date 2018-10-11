@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.example.pertrauktiestaskas.API.api_requests;
 import com.example.pertrauktiestaskas.firebastModels.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,33 +29,33 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class card_login extends AppCompatActivity {
 
+    api_requests Calls;
+
+    private String currentUserGmail = "";
+
     TextView Status;
     TextView InfoText;
     TextView AccountInfo;
+    TextView googleButton;
     ImageView Image;
     ProgressBar Loading;
 
     GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
 
-    private DatabaseReference mDatabase;
+    SignInButton signInButton;
+
+    public String googleAccountText = "Keisti vartotoją";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_login);
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
         Status = findViewById(R.id.statustext);
         InfoText = findViewById(R.id.infoText);
         Image = findViewById(R.id.image);
         Loading = findViewById(R.id.loading);
-
         AccountInfo = findViewById(R.id.accountinfo);
 
         Image.setOnClickListener(new View.OnClickListener() {
@@ -63,20 +65,32 @@ public class card_login extends AppCompatActivity {
             }
         } );
 
+        LaodingHide();
+
+        //Google sign in button and actions
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account[] list = manager.getAccountsByType("com.google");
 
-        if(list.length > 0)
-            AccountInfo.setText("Kortelė bus susieta su " + list[0].name);
-        else
-            AccountInfo.setText("Prisijugti prie google paskyros, norėdami tęsti kortelės pridėjimą");
+        if(list.length > 0){
+            AccountInfo.setText("Kortelė bus susieta su\n" + list[0].name);
+            currentUserGmail = list[0].name;
+        }
+        else {
+            AccountInfo.setText("Prisijunkite prie google paskyros, norėdami tęsti kortelės pridėjimą");
+            googleAccountText = "Pridėti google paskyrą";
+        }
 
-        SignInButton signInButton = findViewById(R.id.sign_in_button);
+        signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
 
-        TextView textView = (TextView) signInButton.getChildAt(0);
-        textView.setText("Kitas vartotojas");
-
+        googleButton = (TextView) signInButton.getChildAt(0);
+        googleButton.setText(googleAccountText);
 
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,24 +102,19 @@ public class card_login extends AppCompatActivity {
                 }
             }
         } );
-
-        //mDatabase = FirebaseDatabase.getInstance().getReference();
-    }
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
-
-        mDatabase.child("users").child(userId).setValue(user);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    public void LaodingHide() {Loading.setVisibility(
-            Loading.GONE);
-    }
+    public void LaodingHide() { Loading.setVisibility(Loading.GONE); }
 
     public void LaodingShow() {Loading.setVisibility(Loading.VISIBLE);}
 
@@ -120,12 +129,44 @@ public class card_login extends AppCompatActivity {
                 .repeat(Animation.INFINITE)
                 .playOn(findViewById(R.id.image));
 
-        GoToActivity();
+        Register();
+        //GoToActivity();
+    }
+
+    public void Register()
+    {
+        if(!api_requests.userActive)
+        {
+            new Thread(new Runnable() {
+                public void run() {
+                    // a potentially time consuming task
+                    final boolean status = api_requests.Register(api_requests.currentUserGmail);
+
+                    if(status)
+                    {
+                        AccountInfo.post(new Runnable() {
+                            public void run() {
+                                AccountInfo.setText(api_requests.currentUserGmail + " susiejimas sėkmingas");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        //TODO reiktu žinutės kas nutiko jei nepavyko vartotojo užregistruoti, bet beveik neimanoma kad taip nutiktu nebet (Concurrent)
+                        AccountInfo.post(new Runnable() {
+                            public void run() {
+                                AccountInfo.setText("Nepavyko aktyvuoti "+ api_requests.currentUserGmail + " paskyros");
+                            }
+                        });
+                    }
+                }
+            }).start();
+        }
     }
 
     public void GoToActivity()
     {
-        Intent i = new Intent(getApplicationContext(), cardlist.class);
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
     }
 
@@ -145,20 +186,15 @@ public class card_login extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // Signed in successfully, show authenticated UI.
-            //updateUI(account);
             updateUI(account);
         } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            //Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            //updateUI(null);
+
+            AccountInfo.setText("Klaida. Mėginkite dar kartą");
+            googleButton.setText("Pridėti paskyrą");
         }
     }
 
     private void updateUI(GoogleSignInAccount account) {
         InfoText.setText("Kortelė bus susieta su " + account.getEmail());
-        //writeNewUser(account.getId(), account.getDisplayName(), account.getFamilyName());
     }
 }
