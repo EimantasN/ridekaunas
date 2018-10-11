@@ -1,5 +1,6 @@
 package com.example.pertrauktiestaskas.trulify;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -7,9 +8,9 @@ import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -47,7 +48,7 @@ public class Register extends AppCompatActivity {
 
         header = findViewById(R.id.statustext);
 
-        AddCard = (Button) findViewById(R.id.button4);
+        AddCard = findViewById(R.id.button4);
         AddCard.setEnabled(false);
         AddCard.setBackgroundColor(Color.GRAY);
 
@@ -155,6 +156,7 @@ public class Register extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onNewIntent(Intent intent) {
         //Toast.makeText(this,""+intent.getAction(), Toast.LENGTH_LONG).show();
@@ -163,11 +165,8 @@ public class Register extends AppCompatActivity {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equalsIgnoreCase(action)) {
             try {
-                if(tag != null) {
-
-                    byte[] tagId = tag.getId();
-                    serialId = bytesToHex(tagId);
-
+                byte[] tagId = tag.getId();
+                serialId = bytesToHex(tagId);
 
                     IDText.setText("0000   0000   00" +
                             serialId.toCharArray()[0] + serialId.toCharArray()[1] + "" +
@@ -180,14 +179,15 @@ public class Register extends AppCompatActivity {
 
                     header.setText("Synchronization in progress...");
 
-                    progress.setVisibility(progress.VISIBLE);
+                progress.setVisibility(View.VISIBLE);
 
                     new LongOperation().execute();
-                }
 
             } catch (NullPointerException ex) {
                 ex.printStackTrace();
                 serialId = "ERROR";
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else {
             //Toast.makeText(this, "This tag is not supported. Action: " + action, Toast.LENGTH_LONG).show();
@@ -214,7 +214,7 @@ private class LongOperation extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         header.setText("Card added");
-        progress.setVisibility(progress.GONE);
+        progress.setVisibility(View.GONE);
         AddCard.setEnabled(true);
         AddCard.setBackgroundColor(Color.parseColor("#88c024"));
 
