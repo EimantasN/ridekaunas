@@ -131,29 +131,29 @@ public class Register extends AppCompatActivity {
     {
         super.onResume();
 
-        PendingIntent pendingIntent     = PendingIntent.getActivity(this,0,new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
-        IntentFilter[] intentFilters    = { new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED) };
-
-        adapter.enableForegroundDispatch(   this,
-                pendingIntent,
-                intentFilters,
-                new String[][]{
-                        new String[]{"android.nfc.tech.NfcA"}
-                });
+//        PendingIntent pendingIntent     = PendingIntent.getActivity(this,0,new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
+//        IntentFilter[] intentFilters    = { new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED) };
+//
+//        adapter.enableForegroundDispatch(   this,
+//                pendingIntent,
+//                intentFilters,
+//                new String[][]{
+//                        new String[]{"android.nfc.tech.NfcA"}
+//                });
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        if (adapter != null)
-        {
-            try {
-                adapter.disableForegroundDispatch(this);
-            }
-            catch (NullPointerException e) {
-            }
-        }
+//        if (adapter != null)
+//        {
+//            try {
+//                adapter.disableForegroundDispatch(this);
+//            }
+//            catch (NullPointerException e) {
+//            }
+//        }
     }
 
     @SuppressLint("NewApi")

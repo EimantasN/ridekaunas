@@ -26,7 +26,7 @@ public class api_requests {
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType, "\"noreika.eimantas@gmail.com\"");
             Request request = new Request.Builder()
-                    .url("http://api.pertrauktiestaskas.lt/api/User/")
+                    .url("http://api.pertrauktiestaskas.lt/api/User/Login")
                     .post(body)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("cache-control", "no-cache")
@@ -54,6 +54,7 @@ public class api_requests {
         return -1;
     }
 
+    //TODO reikia grazinti status kodus, nes dabar register nepavyko nes jau toks yra
     public static boolean Register(String gmail)
     {
         OkHttpClient client = new OkHttpClient();
@@ -65,7 +66,6 @@ public class api_requests {
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
-                .addHeader("Postman-Token", "997222f0-090c-4450-8ae6-acf17bd347ed")
                 .build();
 
         try {
@@ -76,6 +76,28 @@ public class api_requests {
             e.printStackTrace();
         }
 
+        return false;
+    }
+
+    public static boolean updatePersonalInfo()
+    {
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\r\n  \"id\": 0,\r\n  \"name\": \"A\",\r\n  \"lastName\": \"B\",\r\n  \"imgUrl\": \"gOOGLEurL\",\r\n  \"gmail\": \"noreika.eimantas2@gmail.com\",\r\n  \"lastUsed\": \"2018-10-08T00:00:00\",\r\n  \"created\": \"0001-01-01T00:00:00\",\r\n  \"history\": null,\r\n  \"cards\": null,\r\n  \"favoriteRoutes\": null\r\n}");
+        Request request = new Request.Builder()
+                .url("http://api.pertrauktiestaskas.lt/api/User/AddPersonalInfo")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            return Boolean.parseBoolean(response.body().source().readString(Charset.forName("UTF-8")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }

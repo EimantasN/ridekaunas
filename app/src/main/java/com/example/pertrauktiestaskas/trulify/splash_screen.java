@@ -62,10 +62,16 @@ public class splash_screen extends AppCompatActivity {
                             //Perkeliu i main activity
                             GoToMainActivity();
                         }
-                        else //Jeigu naujas vartotojas
+                        else if(ID == -2)//Jeigu naujas vartotojas
                         {
                             GotoCardAddActivity();
                         }
+                        else
+                        {
+                            GotoAccountChooseActivity();
+                        }
+
+
                     }
                 }).start();
             }
@@ -82,9 +88,15 @@ public class splash_screen extends AppCompatActivity {
         startActivity(i);
     }
 
-    public void GotoCardAddActivity()
+    public void GotoAccountChooseActivity()
     {
         Intent i = new Intent(getApplicationContext(), card_login.class);
+        startActivity(i);
+    }
+
+    public void GotoCardAddActivity()
+    {
+        Intent i = new Intent(getApplicationContext(), Register.class);
         startActivity(i);
     }
 }
