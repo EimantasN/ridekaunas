@@ -7,25 +7,16 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.MifareClassic;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.example.pertrauktiestaskas.methods.ByteUtils;
-import com.example.pertrauktiestaskas.methods.BusApiHandler;
-import com.example.pertrauktiestaskas.methods.CardKeys;
-import com.example.pertrauktiestaskas.methods.ClassicCard;
-import com.example.pertrauktiestaskas.methods.ClassicCardKeys;
-import com.example.pertrauktiestaskas.methods.ClassicTagReader;
-import com.example.pertrauktiestaskas.methods.RawClassicCard;
 
 import com.example.pertrauktiestaskas.methods.BusApiHandler;
 import com.example.pertrauktiestaskas.models.TrafiListModel;
@@ -57,7 +48,7 @@ public class Register extends AppCompatActivity {
 
         header = findViewById(R.id.statustext);
 
-        AddCard = (Button) findViewById(R.id.button4);
+        AddCard = findViewById(R.id.button4);
         AddCard.setEnabled(false);
         AddCard.setBackgroundColor(Color.GRAY);
 
@@ -176,12 +167,6 @@ public class Register extends AppCompatActivity {
             try {
                 byte[] tagId = tag.getId();
                 serialId = bytesToHex(tagId);
-                ClassicCardKeys c = ClassicCardKeys.fromUserInput(ByteUtils.hexStringToByteArray("D3F7D3F7D3F7"),
-                        ByteUtils.hexStringToByteArray("FFFFFFFFFFFF"));
-                ClassicTagReader tr = new ClassicTagReader(tagId, tag, c);
-                RawClassicCard card = tr.readTag(tagId, tag, tr.getTech(tag), c );
-                ClassicCard cc = card.parse();
-
 
                     IDText.setText("0000   0000   00" +
                             serialId.toCharArray()[0] + serialId.toCharArray()[1] + "" +
@@ -194,7 +179,7 @@ public class Register extends AppCompatActivity {
 
                     header.setText("Synchronization in progress...");
 
-                    progress.setVisibility(progress.VISIBLE);
+                progress.setVisibility(View.VISIBLE);
 
                     new LongOperation().execute();
 
@@ -229,7 +214,7 @@ private class LongOperation extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         header.setText("Card added");
-        progress.setVisibility(progress.GONE);
+        progress.setVisibility(View.GONE);
         AddCard.setEnabled(true);
         AddCard.setBackgroundColor(Color.parseColor("#88c024"));
 

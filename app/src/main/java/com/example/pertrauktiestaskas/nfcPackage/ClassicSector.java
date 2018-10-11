@@ -1,4 +1,4 @@
-package com.example.pertrauktiestaskas.methods;
+package com.example.pertrauktiestaskas.nfcPackage;
 
 public interface ClassicSector {
     int getIndex();

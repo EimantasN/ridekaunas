@@ -1,6 +1,5 @@
-package com.example.pertrauktiestaskas.methods;
+package com.example.pertrauktiestaskas.nfcPackage;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import java.util.Date;

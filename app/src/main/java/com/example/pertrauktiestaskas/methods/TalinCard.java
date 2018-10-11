@@ -1,11 +1,13 @@
 package com.example.pertrauktiestaskas.methods;
 
+import com.example.pertrauktiestaskas.nfcPackage.ClassicCard;
+import com.example.pertrauktiestaskas.nfcPackage.DataClassicSector;
+
 import java.io.UnsupportedEncodingException;
 
 public class TalinCard {
 
     private final ClassicCard card;
-
     public TalinCard(ClassicCard card) {
         this.card = card;
     }

@@ -1,4 +1,4 @@
-package com.example.pertrauktiestaskas.methods;
+package com.example.pertrauktiestaskas.nfcPackage;
 
 import android.os.Build;
 import android.support.annotation.NonNull;

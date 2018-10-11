@@ -5,6 +5,9 @@ import android.nfc.tech.TagTechnology;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.example.pertrauktiestaskas.nfcPackage.CardKeys;
+import com.example.pertrauktiestaskas.nfcPackage.RawCard;
+
 public abstract class TagReader<
         T extends TagTechnology,
         C extends RawCard,
@@ -22,26 +25,6 @@ public abstract class TagReader<
         mCardKeys = cardKeys;
     }
 
-    @NonNull
-    public C readTag() throws Exception {
-        T tech = getTech(mTag);
-        try {
-            tech.connect();
-            return readTag(mTagId, mTag, tech, mCardKeys);
-        } finally {
-            if (tech.isConnected()) {
-                IOUtils.closeQuietly(tech);
-            }
-        }
-    }
-
-    @NonNull
-    protected abstract C readTag(
-            @NonNull byte[] tagId,
-            @NonNull Tag tag,
-            @NonNull T tech,
-            @Nullable K cardKeys)
-            throws Exception;
 
     @NonNull
     protected abstract T getTech(@NonNull Tag tag);

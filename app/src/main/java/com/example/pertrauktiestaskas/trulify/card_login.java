@@ -8,9 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -21,11 +20,11 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.pertrauktiestaskas.firebastModels.User;
 import com.example.pertrauktiestaskas.methods.ByteUtils;
-import com.example.pertrauktiestaskas.methods.ClassicCard;
-import com.example.pertrauktiestaskas.methods.ClassicCardKeys;
-import com.example.pertrauktiestaskas.methods.ClassicTagReader;
-import com.example.pertrauktiestaskas.methods.RawClassicCard;
-import com.example.pertrauktiestaskas.methods.TalinCard;
+import com.example.pertrauktiestaskas.methods.ClassicTagRW;
+import com.example.pertrauktiestaskas.nfcPackage.ByteArray;
+import com.example.pertrauktiestaskas.nfcPackage.ClassicBlock;
+import com.example.pertrauktiestaskas.nfcPackage.ClassicCard;
+import com.example.pertrauktiestaskas.nfcPackage.ClassicCardKeys;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -34,9 +33,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import static com.example.pertrauktiestaskas.methods.NfcClass.bytesToHex;
 
 public class card_login extends AppCompatActivity {
 
@@ -158,11 +154,13 @@ public class card_login extends AppCompatActivity {
                 ClassicCardKeys c = ClassicCardKeys.fromUserInput(
                         ByteUtils.hexStringToByteArray("D3F7D3F7D3F7"),
                         ByteUtils.hexStringToByteArray("FFFFFFFFFFFF"));
-                ClassicTagReader tr = new ClassicTagReader(tagId, tag, c);
-                RawClassicCard card = tr.readTag(tagId, tag, tr.getTech(tag), c);
-                ClassicCard cc = card.parse();
-                TalinCard tc = new TalinCard(cc);
-                tc.getId();
+                ClassicTagRW tr = new ClassicTagRW(tagId, tag, c);
+                ClassicCard card = tr.readTag();
+                ByteArray ba = new ByteArray(ByteUtils.hexStringToByteArray("626573746176696d6173000000000000"));
+                ClassicBlock nD = ClassicBlock.create(ClassicBlock.TYPE_DATA, 0, ba);
+                tr.writeTag(nD, 7, 0);
+                //TalinCard tc = new TalinCard(cc);
+
             } catch (NullPointerException ex) {
                 ex.printStackTrace();
                 serialId = "ERROR";
@@ -181,10 +179,12 @@ public class card_login extends AppCompatActivity {
     }
 
     public void LaodingHide() {Loading.setVisibility(
-            Loading.GONE);
+            View.GONE);
     }
 
-    public void LaodingShow() {Loading.setVisibility(Loading.VISIBLE);}
+    public void LaodingShow() {
+        Loading.setVisibility(View.VISIBLE);
+    }
 
     public void ChangeStatusText(String text) {Status.setText(text);}
 

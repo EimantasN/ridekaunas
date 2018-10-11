@@ -1,9 +1,11 @@
-package com.example.pertrauktiestaskas.methods;
+package com.example.pertrauktiestaskas.nfcPackage;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.Base64;
+
+import com.example.pertrauktiestaskas.methods.ByteUtils;
 
 import java.util.Arrays;
 
