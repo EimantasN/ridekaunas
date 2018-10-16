@@ -41,7 +41,7 @@ public class splash_screen extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        LoginIfAcountFound();
+        //LoginIfAcountFound();
     }
 
     public void LoginIfAcountFound()

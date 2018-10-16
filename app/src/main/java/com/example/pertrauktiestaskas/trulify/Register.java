@@ -1,9 +1,7 @@
 package com.example.pertrauktiestaskas.trulify;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -48,16 +46,16 @@ public class Register extends AppCompatActivity {
 
         header = findViewById(R.id.statustext);
 
-        AddCard = findViewById(R.id.button4);
-        AddCard.setEnabled(false);
-        AddCard.setBackgroundColor(Color.GRAY);
-
-        AddCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AddCard();
-            }
-        });
+//        AddCard = findViewById(R.id.button4);
+//        AddCard.setEnabled(false);
+//        AddCard.setBackgroundColor(Color.GRAY);
+//
+//        AddCard.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                AddCard();
+//            }
+//        });
 
         handler = new BusApiHandler();
 
@@ -65,57 +63,57 @@ public class Register extends AppCompatActivity {
         onNewIntent(this.getIntent());
 
 
-        CardName = findViewById(R.id.textView11);
-        CartLastName = findViewById(R.id.textView10);
+        CardName = findViewById(R.id.card_name);
+        CartLastName = findViewById(R.id.card_lname);
 
-        IDText = findViewById(R.id.textView13);
-        ValidTime = findViewById(R.id.textView9);
+        IDText = findViewById(R.id.card_id);
+        ValidTime = findViewById(R.id.card_valid_time);
 
         progress = findViewById(R.id.loading);
 
 
-        TextInputEditText name = findViewById(R.id.nameText);
-        TextInputEditText lastName = findViewById(R.id.lastnameText);
-
-        name.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                if(s.length() != 0)
-                    CardName.setText(s.toString());
-                else
-                    CardName.setText("vardenis");
-            }
-        });
-
-        lastName.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                if(s.length() != 0)
-                    CartLastName.setText(s.toString());
-                else
-                    CartLastName.setText("pavardenis");
-            }
-        });
+//        TextInputEditText name = findViewById(R.id.nameText);
+//        TextInputEditText lastName = findViewById(R.id.lastnameText);
+//
+//        name.addTextChangedListener(new TextWatcher() {
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {}
+//
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start,
+//                                          int count, int after) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start,
+//                                      int before, int count) {
+//                if(s.length() != 0)
+//                    CardName.setText(s.toString());
+//                else
+//                    CardName.setText("vardenis");
+//            }
+//        });
+//
+//        lastName.addTextChangedListener(new TextWatcher() {
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {}
+//
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start,
+//                                          int count, int after) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start,
+//                                      int before, int count) {
+//                if(s.length() != 0)
+//                    CartLastName.setText(s.toString());
+//                else
+//                    CartLastName.setText("pavardenis");
+//            }
+//        });
 
     }
 
