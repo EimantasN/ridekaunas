@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Trulify</string>
+    <string name="app_name">One Ticket</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -20,4 +20,13 @@
         completions."
     </string>
     <string name="title_activity_user_cards">All Cards</string>
+    
+    <string name="card_add">Pridėti kortelę</string>
+    <string name="card_add_info">Norint sujungti kortelę pridėkite ją prie telefono nugarėlės</string>
+    <string name="card_id">902467749064</string>
+    <string name="card_name">Vardenis</string>
+    <string name="card_lname">Pavardenis</string>
+    <string name="card_valid_time">Galioja iki 2024-08-01</string>
+
+    
 </resources>

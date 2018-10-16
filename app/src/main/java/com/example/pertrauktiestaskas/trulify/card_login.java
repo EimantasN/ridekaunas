@@ -2,14 +2,11 @@ package com.example.pertrauktiestaskas.trulify;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -18,13 +15,8 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.example.pertrauktiestaskas.API.api_requests;
 import com.example.pertrauktiestaskas.firebastModels.User;
-import com.example.pertrauktiestaskas.methods.ByteUtils;
-import com.example.pertrauktiestaskas.methods.ClassicTagRW;
-import com.example.pertrauktiestaskas.nfcPackage.ByteArray;
-import com.example.pertrauktiestaskas.nfcPackage.ClassicBlock;
-import com.example.pertrauktiestaskas.nfcPackage.ClassicCard;
-import com.example.pertrauktiestaskas.nfcPackage.ClassicCardKeys;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -33,39 +25,37 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class card_login extends AppCompatActivity {
+
+    api_requests Calls;
+
+    private String currentUserGmail = "";
 
     TextView Status;
     TextView InfoText;
     TextView AccountInfo;
+    TextView googleButton;
     ImageView Image;
     ProgressBar Loading;
 
     GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
-    private String serialId = "";
-    final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-    NfcAdapter adapter;
 
-    private DatabaseReference mDatabase;
+    SignInButton signInButton;
+
+    public String googleAccountText = "Keisti vartotoją";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_login);
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
         Status = findViewById(R.id.statustext);
         InfoText = findViewById(R.id.infoText);
         Image = findViewById(R.id.image);
         Loading = findViewById(R.id.loading);
-
         AccountInfo = findViewById(R.id.accountinfo);
 
         Image.setOnClickListener(new View.OnClickListener() {
@@ -75,23 +65,32 @@ public class card_login extends AppCompatActivity {
             }
         } );
 
-        adapter = NfcAdapter.getDefaultAdapter(this);
-        onNewIntent(this.getIntent());
+        LaodingHide();
+
+        //Google sign in button and actions
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account[] list = manager.getAccountsByType("com.google");
 
-        if(list.length > 0)
-            AccountInfo.setText("Kortelė bus susieta su " + list[0].name);
-        else
-            AccountInfo.setText("Prisijugti prie google paskyros, norėdami tęsti kortelės pridėjimą");
+        if(list.length > 0){
+            AccountInfo.setText("Kortelė bus susieta su\n" + list[0].name);
+            currentUserGmail = list[0].name;
+        }
+        else {
+            AccountInfo.setText("Prisijunkite prie google paskyros, norėdami tęsti kortelės pridėjimą");
+            googleAccountText = "Pridėti google paskyrą";
+        }
 
-        SignInButton signInButton = findViewById(R.id.sign_in_button);
+        signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
 
-        TextView textView = (TextView) signInButton.getChildAt(0);
-        textView.setText("Kitas vartotojas");
-
+        googleButton = (TextView) signInButton.getChildAt(0);
+        googleButton.setText(googleAccountText);
 
         findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,88 +102,21 @@ public class card_login extends AppCompatActivity {
                 }
             }
         } );
-
-        //mDatabase = FirebaseDatabase.getInstance().getReference();
-    }
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
-
-        mDatabase.child("users").child(userId).setValue(user);
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume(){
         super.onResume();
-
-        PendingIntent pendingIntent     = PendingIntent.getActivity(this,0,new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
-        IntentFilter[] intentFilters    = { new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED) };
-
-        adapter.enableForegroundDispatch(   this,
-                pendingIntent,
-                intentFilters,
-                new String[][]{
-                        new String[]{"android.nfc.tech.NfcA"}
-                });
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (adapter != null)
-        {
-            try {
-                adapter.disableForegroundDispatch(this);
-            }
-            catch (NullPointerException e) {
-            }
-        }
-    }
-
-    @SuppressLint("NewApi")
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        String action = intent.getAction();
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        if (NfcAdapter.ACTION_TECH_DISCOVERED.equalsIgnoreCase(action)) {
-            try {
-                byte[] tagId = tag.getId();
-                ClassicCardKeys c = ClassicCardKeys.fromUserInput(
-                        ByteUtils.hexStringToByteArray("D3F7D3F7D3F7"),
-                        ByteUtils.hexStringToByteArray("FFFFFFFFFFFF"));
-                ClassicTagRW tr = new ClassicTagRW(tagId, tag, c);
-                ClassicCard card = tr.readTag();
-                ByteArray ba = new ByteArray(ByteUtils.hexStringToByteArray("626573746176696d6173000000000000"));
-                ClassicBlock nD = ClassicBlock.create(ClassicBlock.TYPE_DATA, 0, ba);
-                tr.writeTag(nD, 7, 0);
-                //TalinCard tc = new TalinCard(cc);
-
-            } catch (NullPointerException ex) {
-                ex.printStackTrace();
-                serialId = "ERROR";
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            //Toast.makeText(this, "This tag is not supported. Action: " + action, Toast.LENGTH_LONG).show();
-        }
-    }
-
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    public void LaodingHide() {Loading.setVisibility(
-            View.GONE);
-    }
+    public void LaodingHide() { Loading.setVisibility(Loading.GONE); }
 
-    public void LaodingShow() {
-        Loading.setVisibility(View.VISIBLE);
-    }
+    public void LaodingShow() {Loading.setVisibility(Loading.VISIBLE);}
 
     public void ChangeStatusText(String text) {Status.setText(text);}
 
@@ -197,12 +129,44 @@ public class card_login extends AppCompatActivity {
                 .repeat(Animation.INFINITE)
                 .playOn(findViewById(R.id.image));
 
-        GoToActivity();
+        Register();
+        //GoToActivity();
+    }
+
+    public void Register()
+    {
+        if(!api_requests.userActive)
+        {
+            new Thread(new Runnable() {
+                public void run() {
+                    // a potentially time consuming task
+                    final boolean status = api_requests.Register(api_requests.currentUserGmail);
+
+                    if(status)
+                    {
+                        AccountInfo.post(new Runnable() {
+                            public void run() {
+                                AccountInfo.setText(api_requests.currentUserGmail + " susiejimas sėkmingas");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        //TODO reiktu žinutės kas nutiko jei nepavyko vartotojo užregistruoti, bet beveik neimanoma kad taip nutiktu nebet (Concurrent)
+                        AccountInfo.post(new Runnable() {
+                            public void run() {
+                                AccountInfo.setText("Nepavyko aktyvuoti "+ api_requests.currentUserGmail + " paskyros");
+                            }
+                        });
+                    }
+                }
+            }).start();
+        }
     }
 
     public void GoToActivity()
     {
-        Intent i = new Intent(getApplicationContext(), cardlist.class);
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
     }
 
@@ -222,20 +186,15 @@ public class card_login extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // Signed in successfully, show authenticated UI.
-            //updateUI(account);
             updateUI(account);
         } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            //Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            //updateUI(null);
+
+            AccountInfo.setText("Klaida. Mėginkite dar kartą");
+            googleButton.setText("Pridėti paskyrą");
         }
     }
 
     private void updateUI(GoogleSignInAccount account) {
         InfoText.setText("Kortelė bus susieta su " + account.getEmail());
-        //writeNewUser(account.getId(), account.getDisplayName(), account.getFamilyName());
     }
 }
